@@ -1,9 +1,18 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs');
 const app = express()
 app.use(express.json())
+
 const port = 3000
-mongoose.connect('mongodb+srv://rubia_mongdb:bdoxA6PityTdiIC7@api-projeto-portfolio.c9l1y92.mongodb.net/?appName=api-projeto-portfolio');
+require('dotenv').config();
+mongoose.connect(process.env.MONGO_URI);
+
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
+});
+
 
 const ProjectSchema = new mongoose.Schema({
   title: {
@@ -37,7 +46,6 @@ app.get('/', (req, res) => {
 })
 
 app.post("/cadastro", async (req, res) => {
-  console.log("TESTE", req.body);
   const project = new Project({
     title: req.body.title, 
     description: req.body.description, 
