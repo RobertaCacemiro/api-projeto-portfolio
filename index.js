@@ -1,65 +1,20 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs');
-const app = express()
-app.use(express.json())
-
-const port = 3000
 require('dotenv').config();
-mongoose.connect(process.env.MONGO_URI);
 
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true }
-});
+const express = require('express')
+const mongoose = require('./src/config/db');
 
+const app = express();
+app.use(express.json());
 
-const ProjectSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    required: true
-  },
-  stacks: {
-    type: [String], 
-    default: [] 
-  },
-  image_url: String,
-  access_url: String, 
-  repository_url: {
-    type: String,
-    required: true
-  },
-  status: {
-    type: Boolean,
-    default: true
-  },
-});
+const authRoutes = require('./src/routes/auth');
+const projectRoutes = require('./src/routes/ProjectRoutes');
 
-const Project = mongoose.model('Project', ProjectSchema);
+app.use('/', authRoutes);
+app.use('/', projectRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Funciona!')
+app.get('/verificacao', (req, res) => {
+  res.send('API para cadastro de projetos a serem utilizado em portfolios, está funcioando!')
 })
 
-app.post("/cadastro", async (req, res) => {
-  const project = new Project({
-    title: req.body.title, 
-    description: req.body.description, 
-    stacks: req.body.stacks, 
-    image_url: req.body.image_url, 
-    access_url: req.body.access_url, 
-    repository_url: req.body.repository_url, 
-    status: req.body.status
-})
-
-  await project.save()
-  res.send(project)
-})
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+const port = 3000;
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
