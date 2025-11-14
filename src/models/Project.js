@@ -15,10 +15,7 @@ const ProjectSchema = new mongoose.Schema({
   },
   image_url: String,
   access_url: String, 
-  repository_url: {
-    type: String,
-    required: true
-  },
+  repository_url: String,
   status: {
     type: Boolean,
     default: false
